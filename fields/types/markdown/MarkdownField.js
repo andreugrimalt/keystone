@@ -130,13 +130,32 @@ module.exports = Field.create({
 		}
 	},
 
+	getInitialState: function(e) {
+		if(this.props.value.md){
+			return {charCount:this.props.value.md.length}
+		}else{
+			return {charCount:0}
+		}
+		//return {charCount: 'Hello!'};
+	},
+
+	change:function(e){
+		var charCount=e.target.value.length
+		this.setState({charCount:charCount})
+	},
+
 	renderField () {
 		var styles = {
 			padding: 8,
 			height: this.props.height,
 		};
-		return <textarea name={this.props.paths.md} style={styles} defaultValue={this.props.value !== undefined && this.props.value.md !== undefined ? this.props.value.md : ''} ref="markdownTextarea" className="md-editor__input code" />;
-	},
+		return (
+			<div>
+				<textarea name={this.props.paths.md} style={styles} defaultValue={this.props.value !== undefined && this.props.value.md !== undefined ? this.props.value.md : ''} onChange={this.change} ref="markdownTextarea" className="md-editor__input code" />
+				<div>Char count = {this.state.charCount}</div>
+			</div>
+		)
+},
 
 	renderValue () {
 		// TODO: victoriafrench - is this the correct way to do this? the object should be creating a default md where one does not exist imo.
