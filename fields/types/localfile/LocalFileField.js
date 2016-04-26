@@ -194,6 +194,16 @@ module.exports = Field.create({
 		return <FormNote note={this.props.note} />;
 	},
 
+	renderImage (fileName){
+		var marginBottom={marginBottom:10};
+		if(fileName&&fileName.match(/(\.jpg|\.jpeg|\.png)/)){
+			var url="https://fireflyuploads.blob.core.windows.net/keystone/"+fileName;
+			return <img className="col-md-3 img-responsive" src={url} alt="poi image" style={marginBottom}/>;
+		}else{
+			return null;
+		}
+	},
+
 	renderUI () {
 		var container = [];
 		var body = [];
@@ -219,6 +229,7 @@ module.exports = Field.create({
 				{this.renderFileAction()}
 
 				<div className="file-container">{container}</div>
+				{this.renderImage(this.getFilename())}
 				{body}
 				{this.renderNote()}
 
