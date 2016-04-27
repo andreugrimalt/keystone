@@ -186,41 +186,18 @@ module.exports = Field.create({
 			</FormField>
 		);
 	},
-
-	renderUI () {
-
-		if (!this.shouldRenderField()) {
+	renderMap(){
+		if(!this.props.value.geo){
+			this.props.value.geo=[];
+		}
+			var coords = {
+				lat: this.props.value.geo[1] || 51.5082928,
+				lng: this.props.value.geo[0] || -0.1277552
+			};
+			var mapStyle={
+				marginBottom:10
+			}
 			return (
-				<FormField label={this.props.label}>{this.renderValue()}</FormField>
-			);
-		}
-
-		/* eslint-disable no-script-url */
-		var showMore = !_.isEmpty(this.state.collapsedFields)
-			? <Button type="link" className="collapsed-field-label" onClick={this.uncollapseFields}>(show more fields)</Button>
-			: null;
-		/* eslint-enable */
-		var coords = {
-		  lat: this.props.value.geo[1],
-		  lng: this.props.value.geo[0]
-		};
-		var mapStyle={
-			marginBottom:10
-		}
-		return (
-			<div>
-				<FormField label={this.props.label}>
-					{showMore}
-				</FormField>
-				{this.renderField('number', 'PO Box / Shop', true)}
-				{this.renderField('name', 'Building Name', true)}
-				{this.renderField('street1', 'Street Address')}
-				{this.renderField('street2', 'Street Address 2', true)}
-				{this.renderSuburbState()}
-				{this.renderPostcodeCountry()}
-				{this.renderGeo()}
-				{this.renderGoogleOptions()}
-				{this.renderNote()}
 				<div style={mapStyle}>
 					<Gmaps
 						width={'800px'}
@@ -248,6 +225,39 @@ module.exports = Field.create({
 							onClick={this.onClick} />*/}
 					</Gmaps>
 				</div>
+			);
+
+	},
+
+	renderUI () {
+
+		if (!this.shouldRenderField()) {
+			return (
+				<FormField label={this.props.label}>{this.renderValue()}</FormField>
+			);
+		}
+
+		/* eslint-disable no-script-url */
+		var showMore = !_.isEmpty(this.state.collapsedFields)
+			? <Button type="link" className="collapsed-field-label" onClick={this.uncollapseFields}>(show more fields)</Button>
+			: null;
+		/* eslint-enable */
+
+		return (
+			<div>
+				<FormField label={this.props.label}>
+					{showMore}
+				</FormField>
+				{this.renderField('number', 'PO Box / Shop', true)}
+				{this.renderField('name', 'Building Name', true)}
+				{this.renderField('street1', 'Street Address')}
+				{this.renderField('street2', 'Street Address 2', true)}
+				{this.renderSuburbState()}
+				{this.renderPostcodeCountry()}
+				{this.renderGeo()}
+				{this.renderGoogleOptions()}
+				{this.renderNote()}
+				{this.renderMap()}
 			</div>
 		);
 	},
