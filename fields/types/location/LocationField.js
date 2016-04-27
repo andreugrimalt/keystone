@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import Field from '../Field';
 import { Button, Checkbox, FormField, FormInput, FormNote, FormRow } from 'elemental';
+import {Gmaps, Marker, InfoWindow, Circle} from 'react-gmaps';
 
 /**
  * TODO:
@@ -132,6 +133,8 @@ module.exports = Field.create({
 		if (this.state.collapsedFields.geo) {
 			return null;
 		}
+		//GoogleMapsLoader.KEY = 'AIzaSyAdK0hodWF2QM3em_zh66JOctMhLhCIl5k';
+
 		return (
 			<FormField label="Lat / Lng" className="form-field--secondary" htmlFor={this.props.paths.geo}>
 				<FormRow>
@@ -143,6 +146,7 @@ module.exports = Field.create({
 					</FormField>
 				</FormRow>
 			</FormField>
+
 		);
 	},
 
@@ -196,7 +200,13 @@ module.exports = Field.create({
 			? <Button type="link" className="collapsed-field-label" onClick={this.uncollapseFields}>(show more fields)</Button>
 			: null;
 		/* eslint-enable */
-
+		var coords = {
+		  lat: this.props.value.geo[1],
+		  lng: this.props.value.geo[0]
+		};
+		var mapStyle={
+			marginBottom:10
+		}
 		return (
 			<div>
 				<FormField label={this.props.label}>
@@ -211,6 +221,33 @@ module.exports = Field.create({
 				{this.renderGeo()}
 				{this.renderGoogleOptions()}
 				{this.renderNote()}
+				<div style={mapStyle}>
+					<Gmaps
+						width={'800px'}
+						height={'600px'}
+						lat={coords.lat}
+						lng={coords.lng}
+						zoom={12}
+						loadingMessage={'Be happy'}
+						params={{v: '3.exp'}}
+						onMapCreated={this.onMapCreated}>
+						<Marker
+							lat={coords.lat}
+							lng={coords.lng}
+							draggable={true}
+							onDragEnd={this.onDragEnd} />
+						{/*<InfoWindow
+							lat={coords.lat}
+							lng={coords.lng}
+							content={'Hello, React :)'}
+							onCloseClick={this.onCloseClick} />
+						<Circle
+							lat={coords.lat}
+							lng={coords.lng}
+							radius={500}
+							onClick={this.onClick} />*/}
+					</Gmaps>
+				</div>
 			</div>
 		);
 	},
