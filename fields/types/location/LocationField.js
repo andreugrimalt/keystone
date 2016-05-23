@@ -133,6 +133,8 @@ module.exports = Field.create({
 		if (this.state.collapsedFields.geo) {
 			return null;
 		}
+		console.log(this.props.value)
+
 		//GoogleMapsLoader.KEY = 'AIzaSyAdK0hodWF2QM3em_zh66JOctMhLhCIl5k';
 
 		return (
@@ -180,12 +182,13 @@ module.exports = Field.create({
 
 	onDragEnd(e) {
 		var value = this.props.value;
+		console.log(value.geo[0],value.geo[1]);
 		if (!value.geo) {
 			value.geo = ['', ''];
 		}
 
-		value.geo[1] = e.latLng.lat();
-		value.geo[0] = e.latLng.lng();
+		value.geo[0] = e.latLng.lat();
+		value.geo[1] = e.latLng.lng();
 
 		this.props.onChange({
 			path: this.props.path,
@@ -207,8 +210,8 @@ module.exports = Field.create({
 			this.props.value.geo=[];
 		}
 			var coords = {
-				lat: this.props.value.geo[1] || 51.5082928,
-				lng: this.props.value.geo[0] || -0.1277552
+				lat: this.props.value.geo[0] || 51.5082928,
+				lng: this.props.value.geo[1] || -0.1277552
 			};
 			var mapStyle={
 				marginBottom:10
@@ -230,7 +233,7 @@ module.exports = Field.create({
 							lat={coords.lat}
 							lng={coords.lng}
 							draggable={true}
-							onDragEnd={this.onDragEnd} />
+							onDragEnd={this.onDragEnd}/>
 						{/*<InfoWindow
 							lat={coords.lat}
 							lng={coords.lng}
