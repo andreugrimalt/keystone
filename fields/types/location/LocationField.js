@@ -139,10 +139,10 @@ module.exports = Field.create({
 			<FormField label="Lat / Lng" className="form-field--secondary" htmlFor={this.props.paths.geo}>
 				<FormRow>
 					<FormField width="one-half" className="form-field--secondary">
-						<FormInput name={this.props.paths.geo} ref="geo1" value={this.props.value.geo ? this.props.value.geo[1] : ''} onChange={this.geoChanged.bind(this, 1)} placeholder="Latitude" />
+						<FormInput name={this.props.paths.geo} ref="geo1" value={this.props.value.geo ? this.props.value.geo[0] : ''} onChange={this.geoChanged.bind(this, 0)} placeholder="Latitude" />
 					</FormField>
 					<FormField width="one-half" className="form-field--secondary">
-						<FormInput name={this.props.paths.geo} ref="geo0" value={this.props.value.geo ? this.props.value.geo[0] : ''} onChange={this.geoChanged.bind(this, 0)} placeholder="Longitude" />
+						<FormInput name={this.props.paths.geo} ref="geo0" value={this.props.value.geo ? this.props.value.geo[1] : ''} onChange={this.geoChanged.bind(this, 1)} placeholder="Longitude" />
 					</FormField>
 				</FormRow>
 			</FormField>
@@ -178,6 +178,22 @@ module.exports = Field.create({
 		);
 	},
 
+	onDragEnd(e) {
+		var value = this.props.value;
+		if (!value.geo) {
+			value.geo = ['', ''];
+		}
+
+		value.geo[1] = e.latLng.lat();
+		value.geo[0] = e.latLng.lng();
+
+		this.props.onChange({
+			path: this.props.path,
+			value: value,
+		});
+		console.log(value.geo[0],value.geo[1]);
+	},
+
 	renderNote () {
 		if (!this.props.note) return null;
 		return (
@@ -197,6 +213,7 @@ module.exports = Field.create({
 			var mapStyle={
 				marginBottom:10
 			}
+			var zoom=this.props.zoom || 16;
 			return (
 				<div style={mapStyle}>
 					<Gmaps
@@ -204,10 +221,11 @@ module.exports = Field.create({
 						height={'600px'}
 						lat={coords.lat}
 						lng={coords.lng}
-						zoom={12}
+						zoom={zoom}
 						loadingMessage={'Be happy'}
 						params={{v: '3.exp'}}
-						onMapCreated={this.onMapCreated}>
+						onMapCreated={this.onMapCreated}
+						onClick={this.mapClick}>
 						<Marker
 							lat={coords.lat}
 							lng={coords.lng}
@@ -216,7 +234,7 @@ module.exports = Field.create({
 						{/*<InfoWindow
 							lat={coords.lat}
 							lng={coords.lng}
-							content={'Hello, React :)'}
+							content={this.lat+","+this.lng}
 							onCloseClick={this.onCloseClick} />
 						<Circle
 							lat={coords.lat}
