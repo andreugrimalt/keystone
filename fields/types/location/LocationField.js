@@ -133,7 +133,6 @@ module.exports = Field.create({
 		if (this.state.collapsedFields.geo) {
 			return null;
 		}
-		console.log(this.props.value)
 
 		//GoogleMapsLoader.KEY = 'AIzaSyAdK0hodWF2QM3em_zh66JOctMhLhCIl5k';
 
@@ -180,22 +179,22 @@ module.exports = Field.create({
 		);
 	},
 
-	onDragEnd(e) {
+	/*onDragEnd(e) {
 		var value = this.props.value;
 		console.log(value.geo[0],value.geo[1]);
 		if (!value.geo) {
 			value.geo = ['', ''];
 		}
 
-		value.geo[0] = e.latLng.lat();
-		value.geo[1] = e.latLng.lng();
+		value.geo[1] = e.latLng.lat();
+		value.geo[0] = e.latLng.lng();
 
 		this.props.onChange({
 			path: this.props.path,
 			value: value,
 		});
 		console.log(value.geo[0],value.geo[1]);
-	},
+	},*/
 
 	renderNote () {
 		if (!this.props.note) return null;
@@ -232,8 +231,7 @@ module.exports = Field.create({
 						<Marker
 							lat={coords.lat}
 							lng={coords.lng}
-							draggable={true}
-							onDragEnd={this.onDragEnd}/>
+							draggable={false}/>
 						{/*<InfoWindow
 							lat={coords.lat}
 							lng={coords.lng}
