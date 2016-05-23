@@ -140,10 +140,10 @@ module.exports = Field.create({
 			<FormField label="Lat / Lng" className="form-field--secondary" htmlFor={this.props.paths.geo}>
 				<FormRow>
 					<FormField width="one-half" className="form-field--secondary">
-						<FormInput name={this.props.paths.geo} ref="geo1" value={this.props.value.geo ? this.props.value.geo[0] : ''} onChange={this.geoChanged.bind(this, 0)} placeholder="Latitude" />
+						<FormInput name={this.props.paths.geo} ref="geo1" value={this.props.value.geo ? this.props.value.geo[1] : ''} onChange={this.geoChanged.bind(this, 1)} placeholder="Latitude" />
 					</FormField>
 					<FormField width="one-half" className="form-field--secondary">
-						<FormInput name={this.props.paths.geo} ref="geo0" value={this.props.value.geo ? this.props.value.geo[1] : ''} onChange={this.geoChanged.bind(this, 1)} placeholder="Longitude" />
+						<FormInput name={this.props.paths.geo} ref="geo0" value={this.props.value.geo ? this.props.value.geo[0] : ''} onChange={this.geoChanged.bind(this, 0)} placeholder="Longitude" />
 					</FormField>
 				</FormRow>
 			</FormField>
@@ -209,8 +209,8 @@ module.exports = Field.create({
 			this.props.value.geo=[];
 		}
 			var coords = {
-				lat: this.props.value.geo[0] || 51.5082928,
-				lng: this.props.value.geo[1] || -0.1277552
+				lat: this.props.value.geo[1] || 51.5082928,
+				lng: this.props.value.geo[0] || -0.1277552
 			};
 			var mapStyle={
 				marginBottom:10
