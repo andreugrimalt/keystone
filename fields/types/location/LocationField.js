@@ -143,10 +143,10 @@ module.exports = Field.create({
 			<FormField label="Lat / Lng" className="form-field--secondary" htmlFor={this.props.paths.geo}>
 				<FormRow>
 					<FormField width="one-half" className="form-field--secondary">
-						<FormInput name={this.props.paths.geo} ref="geo1" value={this.props.value.geo ? this.props.value.geo[0] : ''} onChange={this.geoChanged.bind(this, 1)} placeholder="Latitude" />
+						<FormInput name={this.props.paths.geo+ '[1]'} ref="geo1" value={this.props.value.geo ? this.props.value.geo[1] : ''} onChange={this.geoChanged.bind(this, 1)} placeholder="Latitude" />
 					</FormField>
 					<FormField width="one-half" className="form-field--secondary">
-						<FormInput name={this.props.paths.geo} ref="geo0" value={this.props.value.geo ? this.props.value.geo[1] : ''} onChange={this.geoChanged.bind(this, 0)} placeholder="Longitude" />
+						<FormInput name={this.props.paths.geo+ '[0]'} ref="geo0" value={this.props.value.geo ? this.props.value.geo[0] : ''} onChange={this.geoChanged.bind(this, 0)} placeholder="Longitude" />
 					</FormField>
 				</FormRow>
 			</FormField>
@@ -193,12 +193,8 @@ module.exports = Field.create({
 	},
 	placeCallback(place){
 
-		this.props.value.geo[0]=place.geometry.location.lat();
-		this.props.onChange({
-			path: this.props.path,
-			value: this.props.value,
-		});
-		this.props.value.geo[1]=place.geometry.location.lng();
+		this.props.value.geo[1]=place.geometry.location.lat();
+		this.props.value.geo[0]=place.geometry.location.lng();
 		var address;
 		if (place.address_components) {
 			address = [
@@ -221,12 +217,13 @@ module.exports = Field.create({
 
 	},
 	renderMap(){
+
 		if(!this.props.value.geo){
 			this.props.value.geo=[];
 		}
 			var coords = {
-				lat: this.props.value.geo[0] || 51.5082928,
-				lng: this.props.value.geo[1] || -0.1277552
+				lat: parseFloat(this.props.value.geo[1]) || 51.5082928,
+				lng: parseFloat(this.props.value.geo[0]) || -0.1277552
 			};
 			var mapStyle={
 				marginBottom:10
@@ -235,31 +232,6 @@ module.exports = Field.create({
 			return (
 				<div style={mapStyle}>
 					<Gmap lat={coords.lat} lng={coords.lng} placeCallback={this.placeCallback}></Gmap>
-					{/*<Gmaps
-						width={'800px'}
-						height={'600px'}
-						lat={coords.lat}
-						lng={coords.lng}
-						zoom={zoom}
-						loadingMessage={'Be happy'}
-						params={{v: '3.exp', key:'AIzaSyDD1UtUY54hzCXLQInMuCbruWN853asbFQ', libraries:'places'}}
-						onMapCreated={this.onMapCreated}
-						onClick={this.mapClick}>
-						<Marker
-							lat={coords.lat}
-							lng={coords.lng}
-							draggable={false}/>
-						<InfoWindow
-							lat={coords.lat}
-							lng={coords.lng}
-							content={this.lat+","+this.lng}
-							onCloseClick={this.onCloseClick} />
-						<Circle
-							lat={coords.lat}
-							lng={coords.lng}
-							radius={500}
-							onClick={this.onClick} />
-					</Gmaps>*/}
 				</div>
 			);
 
