@@ -84,8 +84,7 @@
     "superagent": "1.8.3",
     "vkey": "1.0.0",
     "watchify": "3.7.0",
-    "xhr": "2.2.0",
-    "react-gmaps":"*"
+    "xhr": "2.2.0"
   },
   "devDependencies": {
     "codeclimate-test-reporter": "0.3.1",

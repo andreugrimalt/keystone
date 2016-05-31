@@ -2,8 +2,8 @@ import _ from 'lodash';
 import React from 'react';
 import Field from '../Field';
 import { Button, Checkbox, FormField, FormInput, FormNote, FormRow } from 'elemental';
-import {Gmaps, Marker, InfoWindow, Circle} from 'react-gmaps';
-
+//import {Gmaps, Marker, InfoWindow, Circle} from 'react-gmaps';
+import Gmap from './LocationMap';
 /**
  * TODO:
  * - Remove dependency on underscore
@@ -23,6 +23,7 @@ module.exports = Field.create({
 	},
 
 	componentWillMount () {
+
 		var collapsedFields = {};
 		_.forEach(['number', 'name', 'street2', 'geo'], (i) => {
 			if (!this.props.value[i]) {
@@ -32,6 +33,7 @@ module.exports = Field.create({
 		this.setState({
 			collapsedFields: collapsedFields,
 		});
+
 	},
 
 	componentDidUpdate (prevProps, prevState) {
@@ -51,7 +53,7 @@ module.exports = Field.create({
 	},
 
 	fieldChanged (path, event) {
-		var value = this.props.value;
+		var value = this.props.value
 		value[path] = event.target.value;
 		this.props.onChange({
 			path: this.props.path,
@@ -61,6 +63,7 @@ module.exports = Field.create({
 
 	geoChanged (i, event) {
 		var value = this.props.value;
+
 		if (!value.geo) {
 			value.geo = ['', ''];
 		}
@@ -140,10 +143,10 @@ module.exports = Field.create({
 			<FormField label="Lat / Lng" className="form-field--secondary" htmlFor={this.props.paths.geo}>
 				<FormRow>
 					<FormField width="one-half" className="form-field--secondary">
-						<FormInput name={this.props.paths.geo} ref="geo1" value={this.props.value.geo ? this.props.value.geo[1] : ''} onChange={this.geoChanged.bind(this, 1)} placeholder="Latitude" />
+						<FormInput name={this.props.paths.geo} ref="geo1" value={this.props.value.geo ? this.props.value.geo[0] : ''} onChange={this.geoChanged.bind(this, 1)} placeholder="Latitude" />
 					</FormField>
 					<FormField width="one-half" className="form-field--secondary">
-						<FormInput name={this.props.paths.geo} ref="geo0" value={this.props.value.geo ? this.props.value.geo[0] : ''} onChange={this.geoChanged.bind(this, 0)} placeholder="Longitude" />
+						<FormInput name={this.props.paths.geo} ref="geo0" value={this.props.value.geo ? this.props.value.geo[1] : ''} onChange={this.geoChanged.bind(this, 0)} placeholder="Longitude" />
 					</FormField>
 				</FormRow>
 			</FormField>
@@ -179,22 +182,6 @@ module.exports = Field.create({
 		);
 	},
 
-	/*onDragEnd(e) {
-		var value = this.props.value;
-		console.log(value.geo[0],value.geo[1]);
-		if (!value.geo) {
-			value.geo = ['', ''];
-		}
-
-		value.geo[1] = e.latLng.lat();
-		value.geo[0] = e.latLng.lng();
-
-		this.props.onChange({
-			path: this.props.path,
-			value: value,
-		});
-		console.log(value.geo[0],value.geo[1]);
-	},*/
 
 	renderNote () {
 		if (!this.props.note) return null;
@@ -204,13 +191,42 @@ module.exports = Field.create({
 			</FormField>
 		);
 	},
+	placeCallback(place){
+
+		this.props.value.geo[0]=place.geometry.location.lat();
+		this.props.onChange({
+			path: this.props.path,
+			value: this.props.value,
+		});
+		this.props.value.geo[1]=place.geometry.location.lng();
+		var address;
+		if (place.address_components) {
+			address = [
+				(place.address_components[0] && place.address_components[0].short_name || ''),
+				(place.address_components[1] && place.address_components[1].short_name || '')
+			].join(' ');
+		}
+		this.props.value.street1=address;
+		this.props.value.state=place.address_components[2].short_name;
+		if(place.address_components[6]){
+			this.props.value.postcode=place.address_components[6].short_name;
+		}
+		if(place.address_components[5])
+		this.props.value.country=place.address_components[5].long_name;
+		console.log(place);
+		this.props.onChange({
+			path: this.props.path,
+			value: this.props.value,
+		});
+
+	},
 	renderMap(){
 		if(!this.props.value.geo){
 			this.props.value.geo=[];
 		}
 			var coords = {
-				lat: this.props.value.geo[1] || 51.5082928,
-				lng: this.props.value.geo[0] || -0.1277552
+				lat: this.props.value.geo[0] || 51.5082928,
+				lng: this.props.value.geo[1] || -0.1277552
 			};
 			var mapStyle={
 				marginBottom:10
@@ -218,21 +234,22 @@ module.exports = Field.create({
 			var zoom=this.props.zoom || 16;
 			return (
 				<div style={mapStyle}>
-					<Gmaps
+					<Gmap lat={coords.lat} lng={coords.lng} placeCallback={this.placeCallback}></Gmap>
+					{/*<Gmaps
 						width={'800px'}
 						height={'600px'}
 						lat={coords.lat}
 						lng={coords.lng}
 						zoom={zoom}
 						loadingMessage={'Be happy'}
-						params={{v: '3.exp'}}
+						params={{v: '3.exp', key:'AIzaSyDD1UtUY54hzCXLQInMuCbruWN853asbFQ', libraries:'places'}}
 						onMapCreated={this.onMapCreated}
 						onClick={this.mapClick}>
 						<Marker
 							lat={coords.lat}
 							lng={coords.lng}
 							draggable={false}/>
-						{/*<InfoWindow
+						<InfoWindow
 							lat={coords.lat}
 							lng={coords.lng}
 							content={this.lat+","+this.lng}
@@ -241,11 +258,19 @@ module.exports = Field.create({
 							lat={coords.lat}
 							lng={coords.lng}
 							radius={500}
-							onClick={this.onClick} />*/}
-					</Gmaps>
+							onClick={this.onClick} />
+					</Gmaps>*/}
 				</div>
 			);
 
+	},
+
+	renderSearch(){
+		return (
+			<FormField width="one-half" className="form-field--secondary">
+				<FormInput name="hey" ref="geo0" value={this.props.value.search} placeholder="Search" onChange={this.onSearchChange} />
+			</FormField>
+		);
 	},
 
 	renderUI () {
@@ -273,6 +298,7 @@ module.exports = Field.create({
 				{this.renderField('street2', 'Street Address 2', true)}
 				{this.renderSuburbState()}
 				{this.renderPostcodeCountry()}
+				{this.renderSearch()}
 				{this.renderGeo()}
 				{this.renderGoogleOptions()}
 				{this.renderNote()}
