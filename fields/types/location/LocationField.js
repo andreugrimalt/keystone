@@ -192,7 +192,7 @@ module.exports = Field.create({
 		);
 	},
 	placeCallback(place){
-
+		console.log(place);
 		this.props.value.geo[1]=place.geometry.location.lat();
 		this.props.value.geo[0]=place.geometry.location.lng();
 		var address;
@@ -203,13 +203,18 @@ module.exports = Field.create({
 			].join(' ');
 		}
 		this.props.value.street1=address;
-		this.props.value.state=place.address_components[2].short_name;
-		if(place.address_components[6]){
-			this.props.value.postcode=place.address_components[6].short_name;
+
+		if(place.address_components[place.address_components.length-3]){
+			this.props.value.state=place.address_components[place.address_components.length-3].long_name;
 		}
-		if(place.address_components[5])
-		this.props.value.country=place.address_components[5].long_name;
-		console.log(place);
+
+		if(place.address_components[place.address_components.length-2]){
+			this.props.value.country=place.address_components[place.address_components.length-2].long_name;
+		}
+		if(place.address_components[place.address_components.length-1]){
+			this.props.value.postcode=place.address_components[place.address_components.length-1].short_name;
+		}
+
 		this.props.onChange({
 			path: this.props.path,
 			value: this.props.value,
