@@ -192,7 +192,6 @@ module.exports = Field.create({
 		);
 	},
 	placeCallback(place){
-		console.log(place);
 		this.props.value.geo[1]=place.geometry.location.lat();
 		this.props.value.geo[0]=place.geometry.location.lng();
 		var address;
