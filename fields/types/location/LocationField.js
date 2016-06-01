@@ -241,14 +241,6 @@ module.exports = Field.create({
 
 	},
 
-	renderSearch(){
-		return (
-			<FormField width="one-half" className="form-field--secondary">
-				<FormInput name="hey" ref="geo0" value={this.props.value.search} placeholder="Search" onChange={this.onSearchChange} />
-			</FormField>
-		);
-	},
-
 	renderUI () {
 
 		if (!this.shouldRenderField()) {
@@ -274,7 +266,6 @@ module.exports = Field.create({
 				{this.renderField('street2', 'Street Address 2', true)}
 				{this.renderSuburbState()}
 				{this.renderPostcodeCountry()}
-				{this.renderSearch()}
 				{this.renderGeo()}
 				{this.renderGoogleOptions()}
 				{this.renderNote()}
