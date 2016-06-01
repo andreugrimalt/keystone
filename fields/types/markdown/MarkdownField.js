@@ -132,16 +132,17 @@ module.exports = Field.create({
 
 	getInitialState: function(e) {
 		if(this.props.value.md){
-			return {charCount:this.props.value.md.length}
+			return {charCount:this.props.value.md.length,wordCount:this.props.value.md.split(" ").length}
 		}else{
-			return {charCount:0}
+			return {charCount:0,wordCount:0}
 		}
 		//return {charCount: 'Hello!'};
 	},
 
 	change:function(e){
-		var charCount=e.target.value.length
-		this.setState({charCount:charCount})
+		var charCount=e.target.value.length;
+		var wordCount=e.target.value.split(" ").length;
+		this.setState({charCount:charCount,wordCount:wordCount});
 	},
 
 	renderField () {
@@ -152,7 +153,7 @@ module.exports = Field.create({
 		return (
 			<div>
 				<textarea name={this.props.paths.md} style={styles} defaultValue={this.props.value !== undefined && this.props.value.md !== undefined ? this.props.value.md : ''} onChange={this.change} ref="markdownTextarea" className="md-editor__input code" />
-				<div>Char count = {this.state.charCount}</div>
+				<div>Char count = {this.state.charCount} Word count = {this.state.wordCount}</div>
 			</div>
 		)
 },
