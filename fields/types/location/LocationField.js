@@ -133,9 +133,9 @@ module.exports = Field.create({
 	},
 
 	renderGeo () {
-		if (this.state.collapsedFields.geo) {
+		/*if (this.state.collapsedFields.geo) {
 			return null;
-		}
+		}*/
 
 		//GoogleMapsLoader.KEY = 'AIzaSyAdK0hodWF2QM3em_zh66JOctMhLhCIl5k';
 
