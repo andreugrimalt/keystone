@@ -2,7 +2,8 @@ import _ from 'lodash';
 import React from 'react';
 import Field from '../Field';
 import { Button, Checkbox, FormField, FormInput, FormNote, FormRow } from 'elemental';
-
+//import {Gmaps, Marker, InfoWindow, Circle} from 'react-gmaps';
+import Gmap from './LocationMap';
 /**
  * TODO:
  * - Remove dependency on underscore
@@ -22,6 +23,7 @@ module.exports = Field.create({
 	},
 
 	componentWillMount () {
+
 		var collapsedFields = {};
 		_.forEach(['number', 'name', 'street2', 'geo'], (i) => {
 			if (!this.props.value[i]) {
@@ -31,6 +33,7 @@ module.exports = Field.create({
 		this.setState({
 			collapsedFields: collapsedFields,
 		});
+
 	},
 
 	componentDidUpdate (prevProps, prevState) {
@@ -50,7 +53,7 @@ module.exports = Field.create({
 	},
 
 	fieldChanged (path, event) {
-		var value = this.props.value;
+		var value = this.props.value
 		value[path] = event.target.value;
 		this.props.onChange({
 			path: this.props.path,
@@ -60,6 +63,7 @@ module.exports = Field.create({
 
 	geoChanged (i, event) {
 		var value = this.props.value;
+
 		if (!value.geo) {
 			value.geo = ['', ''];
 		}
@@ -129,20 +133,24 @@ module.exports = Field.create({
 	},
 
 	renderGeo () {
-		if (this.state.collapsedFields.geo) {
+		/*if (this.state.collapsedFields.geo) {
 			return null;
-		}
+		}*/
+
+		//GoogleMapsLoader.KEY = 'AIzaSyAdK0hodWF2QM3em_zh66JOctMhLhCIl5k';
+
 		return (
 			<FormField label="Lat / Lng" className="form-field--secondary" htmlFor={this.props.paths.geo}>
 				<FormRow>
 					<FormField width="one-half" className="form-field--secondary">
-						<FormInput name={this.props.paths.geo} ref="geo1" value={this.props.value.geo ? this.props.value.geo[1] : ''} onChange={this.geoChanged.bind(this, 1)} placeholder="Latitude" />
+						<FormInput name={this.props.paths.geo+ '[1]'} ref="geo1" value={this.props.value.geo ? this.props.value.geo[1] : ''} onChange={this.geoChanged.bind(this, 1)} placeholder="Latitude" />
 					</FormField>
 					<FormField width="one-half" className="form-field--secondary">
-						<FormInput name={this.props.paths.geo} ref="geo0" value={this.props.value.geo ? this.props.value.geo[0] : ''} onChange={this.geoChanged.bind(this, 0)} placeholder="Longitude" />
+						<FormInput name={this.props.paths.geo+ '[0]'} ref="geo0" value={this.props.value.geo ? this.props.value.geo[0] : ''} onChange={this.geoChanged.bind(this, 0)} placeholder="Longitude" />
 					</FormField>
 				</FormRow>
 			</FormField>
+
 		);
 	},
 
@@ -174,6 +182,7 @@ module.exports = Field.create({
 		);
 	},
 
+
 	renderNote () {
 		if (!this.props.note) return null;
 		return (
@@ -181,6 +190,55 @@ module.exports = Field.create({
 				<FormNote note={this.props.note} />
 			</FormField>
 		);
+	},
+	placeCallback(place){
+		this.props.value.geo[1]=place.geometry.location.lat();
+		this.props.value.geo[0]=place.geometry.location.lng();
+		var address;
+		if (place.address_components) {
+			address = [
+				(place.address_components[0] && place.address_components[0].short_name || ''),
+				(place.address_components[1] && place.address_components[1].short_name || '')
+			].join(' ');
+		}
+		this.props.value.street1=address;
+
+		if(place.address_components[place.address_components.length-3]){
+			this.props.value.state=place.address_components[place.address_components.length-3].long_name;
+		}
+
+		if(place.address_components[place.address_components.length-2]){
+			this.props.value.country=place.address_components[place.address_components.length-2].long_name;
+		}
+		if(place.address_components[place.address_components.length-1]){
+			this.props.value.postcode=place.address_components[place.address_components.length-1].short_name;
+		}
+
+		this.props.onChange({
+			path: this.props.path,
+			value: this.props.value,
+		});
+
+	},
+	renderMap(){
+
+		if(!this.props.value.geo){
+			this.props.value.geo=[];
+		}
+			var coords = {
+				lat: parseFloat(this.props.value.geo[1]) || 51.5082928,
+				lng: parseFloat(this.props.value.geo[0]) || -0.1277552
+			};
+			var mapStyle={
+				marginBottom:10
+			}
+			var zoom=this.props.zoom || 16;
+			return (
+				<div style={mapStyle}>
+					<Gmap lat={coords.lat} lng={coords.lng} placeCallback={this.placeCallback}></Gmap>
+				</div>
+			);
+
 	},
 
 	renderUI () {
@@ -211,6 +269,7 @@ module.exports = Field.create({
 				{this.renderGeo()}
 				{this.renderGoogleOptions()}
 				{this.renderNote()}
+				{this.renderMap()}
 			</div>
 		);
 	},
